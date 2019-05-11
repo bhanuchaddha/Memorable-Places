@@ -17,9 +17,10 @@ import static java.util.Arrays.asList;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static List<String> placeList = new ArrayList<>();
-    public static List<LatLng> locationList = new ArrayList<>();
+
     public static ArrayAdapter placesAdapter ;
+    public static Places places;
+    private SharedPreferenceUtil sharedPreferenceUtil = new SharedPreferenceUtil();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,9 +29,11 @@ public class MainActivity extends AppCompatActivity {
 
         ListView placesListView = findViewById(R.id.placesView);
 
-        placeList.add("Add New location ..");
-        locationList.add(new LatLng(0,0));
-        placesAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1 , placeList);
+        Locations locations = sharedPreferenceUtil.get(this, "locationList", Locations.class);
+        places = sharedPreferenceUtil.get(this, "placeList", Places.class);
+        places.getPlaces().add(0, "Add New location ..");
+        locations.getLocations().add(new LatLng(0,0));
+        placesAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1 , places.getPlaces());
 
         placesListView.setAdapter(placesAdapter);
 

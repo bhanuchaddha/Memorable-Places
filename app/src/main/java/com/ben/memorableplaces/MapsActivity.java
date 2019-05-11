@@ -33,6 +33,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleMap mMap;
     private LocationManager locationManager;
     private LocationListener locationListener;
+    private SharedPreferenceUtil sharedPreferenceUtil = new SharedPreferenceUtil();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,8 +99,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mMap.setOnMapLongClickListener(this);
         } else {
             int position = intent.getIntExtra("position", 0);
-            LatLng latLng = MainActivity.locationList.get(position);
-            String placeAddress = MainActivity.placeList.get(position);
+            Locations locations = sharedPreferenceUtil.get(this, "locationList", Locations.class);
+            Places places = sharedPreferenceUtil.get(this, "placeList", Places.class);
+            LatLng latLng = locations.getLocations().get(position-1); // because 0th position is add location
+            String placeAddress = places.getPlaces().get(position-1);
             Location location = new Location(LocationManager.GPS_PROVIDER);
             location.setLatitude(latLng.latitude);
             location.setLongitude(latLng.longitude);
@@ -150,9 +153,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.addMarker(new MarkerOptions()
                 .position(latLng)
                 .title(address));
-        MainActivity.locationList.add(latLng);
-        MainActivity.placeList.add(address);
+        Locations locations = sharedPreferenceUtil.get(this, "locationList", Locations.class);
+        Places places = sharedPreferenceUtil.get(this, "placeList", Places.class);
+        locations.getLocations().add(latLng);
+        places.getPlaces().add(address);
+
+        // For instant reflection
+        MainActivity.places.getPlaces().add(address);
         MainActivity.placesAdapter.notifyDataSetChanged();
+
+
+        sharedPreferenceUtil.save(this, "locationList", locations);
+        sharedPreferenceUtil.save(this, "placeList", places);
+
 
         Toast.makeText(this, address+" had been saved", Toast.LENGTH_SHORT).show();
     }
