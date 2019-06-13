@@ -10,11 +10,6 @@ import android.widget.ListView;
 
 import com.google.android.gms.maps.model.LatLng;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static java.util.Arrays.asList;
-
 public class MainActivity extends AppCompatActivity {
 
 
